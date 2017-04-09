@@ -9,7 +9,7 @@ aqicn_api_token=`cat ~/.aqi_on_screensaver.api_token`
 location=nanjing  # city name in pinyin
 
 # script trigger a notification when AQI is greater than threshold
-notification_threshold=75
+notification_threshold=50
 
 # the minimum interval between two notifications in seconds
 notification_cooldown=7200
@@ -123,9 +123,21 @@ function refresh {
     echo $aqi_value > $LAST_AQI_VALUE
     echo $(date) AQI: $aqi_value >> $LOG
 
+    if [ $aqi_value -gt `expr 2 \* $notification_threshold` ];
+    then
+        _write_screensaver_plist "AQI: $aqi_value 😫" ;
+    elif [ $aqi_value -gt $notification_threshold ];
+    then
+        _write_screensaver_plist "AQI: $aqi_value 😣" ;
+    elif [ $aqi_value -gt 10 ];
+    then
+        _write_screensaver_plist "AQI: $aqi_value 😁" ;
+    else
+        _write_screensaver_plist "AQI: $aqi_value 😆🎉" ;
+    fi
+
     if [ $aqi_value -gt $notification_threshold ];
     then
-        _write_screensaver_plist "!   AQI: $aqi_value"
         if [ ! -f $LAST_NOTIFICATION_TIME ]; 
         then 
             echo 0 > $LAST_NOTIFICATION_TIME
@@ -139,9 +151,6 @@ function refresh {
         else
             echo $(date) AQI is greater than threshold but waiting for cooldown >> $LOG
         fi
-            
-    else
-        _write_screensaver_plist "AQI: $aqi_value"
     fi
 
 }
