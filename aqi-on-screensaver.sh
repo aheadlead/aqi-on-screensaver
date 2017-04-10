@@ -8,7 +8,7 @@ aqicn_api_token=`cat ~/.aqi_on_screensaver.api_token`
 
 location=nanjing  # city name in pinyin
 
-# script trigger a notification when AQI is greater than threshold
+# script trigger a notification when AQI exceeds the threshold value
 notification_threshold=50
 
 # the minimum interval between two notifications in seconds
@@ -112,7 +112,7 @@ function refresh {
 
     payload=$(curl -is $API_URL)
     
-    echo $payload | grep "\"status\":\"ok\""
+    echo $payload | grep "\"status\":\"ok\"" > /dev/null
     if [ $? -ne 0 ];
     then
         echo $(date) Failed to fetch API: $payload >> $LOG
@@ -145,11 +145,11 @@ function refresh {
         last_notification_time=$(cat $LAST_NOTIFICATION_TIME)
         if [ $(date +%s) -gt `expr $last_notification_time + $notification_cooldown` ];
         then
-            _pop_notification "空气质量恶化，当前AQI为$aqi_value"
+            _pop_notification "空气质量恶化，当前 AQI 为 $aqi_value"
             echo $(date +%s) > $LAST_NOTIFICATION_TIME
             echo $(date) Triggered a notification >> $LOG
         else
-            echo $(date) AQI is greater than threshold but waiting for cooldown >> $LOG
+            echo $(date) The AQI exceeded the threshold level but still waiting for cooldown >> $LOG
         fi
     fi
 
