@@ -4,9 +4,10 @@
 
 update_interval=1800  # seconds
 
-aqicn_api_token=`cat ~/.aqi_on_screensaver.api_token`
+aqicn_api_token=_PLACEHOLDER_
 
-location=nanjing  # city name in pinyin
+# city name in pinyin
+location=nanjing
 
 # script trigger a notification when AQI exceeds the threshold value
 notification_threshold=50
@@ -29,6 +30,21 @@ LAST_NOTIFICATION_TIME=/tmp/aqi_on_screensaver.last_notification_time
 LAST_AQI_VALUE=/tmp/aqi_on_screensaver.last_aql_value
 LOG=/tmp/aqi_on_screensaver.log
 
+
+function _install_config_input {
+    prompt=$1
+    var_to_set=$2
+
+    echo $prompt
+    echo Now: $var_to_set=${!var_to_set}
+    read -p "(leaving blank with no change) New: $var_to_set=" _TMP
+
+    if [ ${#_TMP} -ne 0 ];
+    then
+        sed -e "s/^$var_to_set=.*/$var_to_set=$_TMP/" -i "" $0
+    fi
+    echo
+}
 
 function _install_launchagents_plist {
     # get absolute path
@@ -63,6 +79,10 @@ EOF
         exit 1
     fi
     echo
+
+    _install_config_input "+ Set your API token you applied from aqicn.org." aqicn_api_token
+    _install_config_input "+ Set the city name which you want aqi-on-screensaver notice you." location
+    _install_config_input "+ Set the threshold value. If AQI exceeds the value, aqi-screensaver will push a notification." notification_threshold
 
     echo + Creating launchd services $launchd_service_name
     echo $PLIST > $LAUNCHAGENTS_PLIST_PATH
