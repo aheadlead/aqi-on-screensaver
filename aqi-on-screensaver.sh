@@ -23,6 +23,7 @@ launchd_service_name=com.aheadlead.aqi_on_screensaver
 # --- End of config part. Do not modify below this line.
 
 API_URL=http://api.waqi.info/feed/$location/?token=$aqicn_api_token
+CITYNAME_API_URL=https://api.waqi.info/mapq/nearest/
 LAUNCHAGENTS_PLIST_PATH=~/Library/LaunchAgents/$launchd_service_name.plist
 SCREENSAVE_PLIST_PATH=~/Library/Preferences/ByHost/com.apple.ScreenSaver.Basic.plist
 LAST_REFRESH_TIME=/tmp/aqi_on_screensaver.last_refresh_time
@@ -79,6 +80,14 @@ EOF
         exit 1
     fi
     echo
+
+    payload=$(curl -is $CITYNAME_API_URL)
+    echo $payload | grep "\"city\":\"" > /dev/null
+    if [ $? -eq 0 ];
+    then
+        location=$(echo $payload | grep -Eo -e '"city":"[^"]+' | cut -d '"' -f4 | tr '[A-Z]' '[a-z]')
+        sed -e "s/^location=.*/location=$location/" -i "" $0
+    fi
 
     _install_config_input "+ Set your API token you applied from aqicn.org." aqicn_api_token
     _install_config_input "+ Set the city name which you want aqi-on-screensaver notice you." location

@@ -58,7 +58,7 @@ $ ./aqi-on-screensaver.sh uninstall
 
 ## Todos
 
-* Get the name of locality by IP address, and provide a option to enable or not.
+* Provide a option to enable or not.
 
 ## Author
 
