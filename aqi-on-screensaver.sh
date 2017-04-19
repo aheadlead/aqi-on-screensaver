@@ -225,7 +225,7 @@ function refresh {
         last_notification_time=$(cat $LAST_NOTIFICATION_TIME)
         if [ $(date +%s) -gt `expr $last_notification_time + $notification_cooldown` ];
         then
-            _pop_notification "空气质量恶化，当前 AQI 为 $aqi_value"
+            _pop_notification "空气质量糟糕😞，当前 AQI 为 $aqi_value"
             echo $(date +%s) > $LAST_NOTIFICATION_TIME
             echo $(date) Triggered a notification >> $LOG
         else
