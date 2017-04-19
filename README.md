@@ -15,6 +15,7 @@ better we have a yet another way to get AQI when the screen saver turns on.
 * Display AQI on your screen saver
 * Update AQI from aqicn.org periodically
 * Push notifications when AQI exceed the specified threshold level
+* Get local AQI based on IP address (thank [@feix](https://github.com/feix))
 
 ## Previews
 
@@ -57,8 +58,6 @@ $ ./aqi-on-screensaver.sh uninstall
   though this script did fetch the AQI value in background.
 
 ## Todos
-
-* Get the name of locality by IP address, and provide a option to enable or not.
 
 ## Author
 
